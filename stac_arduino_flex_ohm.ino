@@ -10,22 +10,20 @@ int16_t gx, gy, gz;
 int16_t mx, my, mz;
 float Axyz[3];
 
-const int FLEX_PIN_T = A0; 
-const int FLEX_PIN_M = A1;
-const int FLEX_PIN_B = A2;
-// 47k resistor
+const int FLEX_PIN_L = A0; 
+const int FLEX_PIN_M = A2;
+const int FLEX_PIN_R = A1;
+
 const float VCC = 4.98;
 const float R_DIV = 47500.0;
-int cnt_true = 0;
-int cnt_false = 0;
 
 void setup() {
   Wire.begin();
   Serial.begin(9600);
   BTSerial.begin(9600);
-  pinMode(FLEX_PIN_T, INPUT);
+  pinMode(FLEX_PIN_L, INPUT);
   pinMode(FLEX_PIN_M, INPUT);
-  pinMode(FLEX_PIN_B, INPUT);
+  pinMode(FLEX_PIN_R, INPUT);
   accelgyro.initialize();
 }
 
@@ -38,59 +36,42 @@ void loop() {
   int y = Axyz[1]*100;
   int z = Axyz[2]*100;
 
-  int flexADC_T = analogRead(FLEX_PIN_T);
-  float flexV_T = flexADC_T * VCC / 1023.0;
-  float flexR_T = R_DIV * (VCC / flexV_T - 1.0);
-  
+  int flexADC_L = analogRead(FLEX_PIN_L);
+  float flexV_L = flexADC_L * VCC / 1023.0;
+  float flexR_L = R_DIV * (VCC / flexV_T - 1.0);
+
   int flexADC_M = analogRead(FLEX_PIN_M);
   float flexV_M = flexADC_M * VCC / 1023.0;
-  float flexR_M = R_DIV * (VCC / flexV_M - 1.0);
+  float flexR_M = R_DIV * (VCC / flexV_B - 1.0);
   
-  int flexADC_B = analogRead(FLEX_PIN_B);
-  float flexV_B = flexADC_B * VCC / 1023.0;
-  float flexR_B = R_DIV * (VCC / flexV_B - 1.0);
+  int flexADC_R = analogRead(FLEX_PIN_R);
+  float flexV_R = flexADC_R * VCC / 1023.0;
+  float flexR_R = R_DIV * (VCC / flexV_R - 1.0);
 
+  float flexR_L_fixed = flexR_L - 700;
+  float flexR_M_fixed = flexR_M - 100;
+  float flexR_R_fixed = flexR_M - 300;
+  
   Serial.print("X : ");
   Serial.println(x);
   Serial.print("Y : ");
   Serial.println(y);
   Serial.print("Z : ");
   Serial.println(z);
-//  Serial.println();
-//  BTSerial.println(x);
-//  BTSerial.println(y);
-//  BTSerial.println(z);
-//  BTSerial.println();
-  float flexR_T_fixed = flexR_T - 300;
-  float flexR_M_fixed = flexR_M - 300;
-  float flexR_B_fixed = flexR_B - 300;
-  Serial.println("Resistance: " + flexR_T_fixed + " ohms");
-  Serial.println("Resistance: " + flexR_M_fixed + " ohms");
-  Serial.println("Resistance: " + flexR_B_fixed + " ohms");
-  BTSerial.println(flexR_T_fixed);
+  Serial.println();
+  BTSerial.println(x);
+  BTSerial.println(y);
+  BTSerial.println(z);
+  
+  Serial.println("Resistance: " + String(flexR_L_fixed) + " ohms");
+  Serial.println("Resistance: " + String(flexR_M_fixed) + " ohms");  
+  Serial.println("Resistance: " + String(flexR_R_fixed) + " ohms");
+  
+  
+  BTSerial.println(flexR_L_fixed);
   BTSerial.println(flexR_M_fixed);
-  BTSerial.println(flexR_B_fixed);
+  BTSerial.println(flexR_R_fixed);
+  
 
-  if(flexR_T <= 2100 || flexR_M <= 2100 || flexR_B <= 2100) {
-    cnt_true++;
-    if(cnt_false > 0) {
-      cnt_false--;
-    } else if(cnt_false == 0) {
-      cnt_false = 0;
-    }
-  }
-  else if(flexR_T > 2100 || flexR_M > 2100 || flexR_B > 2100) {
-    cnt_false++;
-    if(cnt_true > 0) {
-      cnt_true--;
-    } else if(cnt_true == 0) {
-      cnt_true = 0;
-    }
-  }
-  if(cnt_true > 0 && cnt_false <= 3) {
-    Serial.println("true");
-  } else {
-    Serial.println("False");
-  }
   delay(1500);
 }
