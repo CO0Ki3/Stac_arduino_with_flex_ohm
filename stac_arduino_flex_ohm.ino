@@ -57,24 +57,26 @@ void loop() {
   /*
    * 자이로 센서 출력
    */
-  Serial.print("X : ");
-  Serial.println(x);
-  Serial.print("Y : ");
-  Serial.println(y);
-  Serial.print("Z : ");
-  Serial.println(z);
-  Serial.println();
-  BTSerial.println(x);
-  BTSerial.println(y);
-  BTSerial.println(z);
-  BTSerial.println();
-  
-  Serial.println("Resistance: " + String(flexR_T) + " ohms");
-  Serial.println("Resistance: " + String(flexR_M) + " ohms");
-  Serial.println("Resistance: " + String(flexR_B) + " ohms");
-  BTSerial.println(String(flexR_T));
-  BTSerial.println(String(flexR_M));
-  BTSerial.println(String(flexR_B));
+//  Serial.print("X : ");
+//  Serial.println(x);
+//  Serial.print("Y : ");
+//  Serial.println(y);
+//  Serial.print("Z : ");
+//  Serial.println(z);
+//  Serial.println();
+//  BTSerial.println(x);
+//  BTSerial.println(y);
+//  BTSerial.println(z);
+//  BTSerial.println();
+  float flexR_T_fixed = flexR_T - 300;
+  float flexR_M_fixed = flexR_M - 300;
+  float flexR_B_fixed = flexR_B - 300;
+  Serial.println("Resistance: " + flexR_T_fixed + " ohms");
+  Serial.println("Resistance: " + flexR_M_fixed + " ohms");
+  Serial.println("Resistance: " + flexR_B_fixed + " ohms");
+  BTSerial.println(flexR_T_fixed);
+  BTSerial.println(flexR_M_fixed);
+  BTSerial.println(flexR_B_fixed);
 
   if(flexR_T <= 2100 || flexR_M <= 2100 || flexR_B <= 2100) {
     cnt_true++;
