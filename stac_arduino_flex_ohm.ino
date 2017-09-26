@@ -3,9 +3,7 @@
 #include "I2Cdev.h"
 #include "MPU9250.h"
 SoftwareSerial BTSerial(2, 3);
-/**
- * 자이로 센서 변수
- */
+
 MPU9250 accelgyro;
 int16_t ax, ay, az;
 int16_t gx, gy, gz;
@@ -16,8 +14,8 @@ const int FLEX_PIN_T = A0;
 const int FLEX_PIN_M = A1;
 const int FLEX_PIN_B = A2;
 // 47k resistor
-const float VCC = 4.98; // Measured voltage of Ardunio 5V line
-const float R_DIV = 47500.0; // Measured resistance of 3.3k resistor
+const float VCC = 4.98;
+const float R_DIV = 47500.0;
 int cnt_true = 0;
 int cnt_false = 0;
 
@@ -32,9 +30,6 @@ void setup() {
 }
 
 void loop() {
-  /*
-   * 자이로 센서 계산식
-   */
   accelgyro.getMotion9(&ax, &ay, &az, &gx, &gy, &gz, &mx, &my, &mz);
   Axyz[0] = (double) ax / 16384;
   Axyz[1] = (double) ay / 16384;
@@ -54,15 +49,13 @@ void loop() {
   int flexADC_B = analogRead(FLEX_PIN_B);
   float flexV_B = flexADC_B * VCC / 1023.0;
   float flexR_B = R_DIV * (VCC / flexV_B - 1.0);
-  /*
-   * 자이로 센서 출력
-   */
-//  Serial.print("X : ");
-//  Serial.println(x);
-//  Serial.print("Y : ");
-//  Serial.println(y);
-//  Serial.print("Z : ");
-//  Serial.println(z);
+
+  Serial.print("X : ");
+  Serial.println(x);
+  Serial.print("Y : ");
+  Serial.println(y);
+  Serial.print("Z : ");
+  Serial.println(z);
 //  Serial.println();
 //  BTSerial.println(x);
 //  BTSerial.println(y);
